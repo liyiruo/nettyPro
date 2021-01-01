@@ -48,7 +48,6 @@ public class ScatteringAndGatheringTest {
             }
             //将所有的buffer 进行clear
             Arrays.asList(byteBuffers).forEach(bufer->{bufer.clear();});
-
             System.out.println("byteRead:="+byteRead+" byteWrite="+byteWrite+",messagelength=>:"+messageLength);
         }
     }
