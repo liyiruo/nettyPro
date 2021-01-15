@@ -2,10 +2,9 @@ package com.liyiruo.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.nio.channels.SelectionKey;
+import java.nio.ByteBuffer;
 import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 
 /**
  * @author liyiruo
@@ -14,23 +13,24 @@ import java.nio.channels.ServerSocketChannel;
  */
 public class NIOClient {
     public static void main(String[] args) throws IOException {
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-
+        //得到一个通道
+        SocketChannel socketChannel = SocketChannel.open();
+        //设置非阻塞
         Selector selector = Selector.open();
-
-        serverSocketChannel.socket().bind(new InetSocketAddress(6666));
-
-        serverSocketChannel.configureBlocking(false);
-
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
-        while (true){
-            if (selector.select(1000)==0){
-                System.out.println("服务器等待了1秒，无连接");
-                continue;
+        //提供服务器端的IP 和端口
+        InetSocketAddress inetSocketAddress = new InetSocketAddress("127.0.0.1", 6666);
+        //连接服务器
+        if (!socketChannel.connect(inetSocketAddress)) {
+            while (!socketChannel.finishConnect()) {
+                System.out.println("因为连接需要时间，客户端不会阻塞，可以做其他工作");
             }
         }
-
+        //如果成功就发送数据
+        String str = "你好，陌生人";
+        ByteBuffer byteBuffer = ByteBuffer.wrap(str.getBytes());
+        //发送数据将buffer数据写入channel
+        socketChannel.write(byteBuffer);
+        System.in.read();
 
     }
 }
