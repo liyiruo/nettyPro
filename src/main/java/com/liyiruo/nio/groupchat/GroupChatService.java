@@ -19,8 +19,8 @@ public class GroupChatService {
 
     public GroupChatService() {
         try {
+            System.out.println("服务器已就绪……");
             selector = Selector.open();
-
             listenChannel = ServerSocketChannel.open();
             listenChannel.socket().bind(new InetSocketAddress(PORT));
             listenChannel.configureBlocking(false);
@@ -49,7 +49,8 @@ public class GroupChatService {
                             System.out.println(sc.getRemoteAddress() + " 上线了");
                         }
                         if (key.isReadable()) {
-                            //处理读
+                            //处理读 todo 之前一直没有处理消息，是因为这里没有调用方法
+                            readData(key);
                         }
                         iterator.remove();
                     }
@@ -59,6 +60,8 @@ public class GroupChatService {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            //发生异常处理
         }
     }
 
@@ -85,7 +88,6 @@ public class GroupChatService {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
-            e.printStackTrace();
         }
     }
 
